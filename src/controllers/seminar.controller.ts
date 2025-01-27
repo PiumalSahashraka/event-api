@@ -5,6 +5,12 @@ import { ISeminarData } from '../interfaces/seminar.interface.js';
 // Helper function for validate strings
 const validateString = (field: any): boolean => typeof field === 'string' && field.trim() !== '';
 
+// Validate dates
+const isValidDate = (dateString: string): boolean => {
+    const date = new Date(dateString);
+    return !isNaN(date.getTime());
+};
+
 export const postSeminar = async (req: Request, res: Response): Promise<void> => {
     const { title, description, date } = req.body;
 
@@ -30,7 +36,15 @@ export const postSeminar = async (req: Request, res: Response): Promise<void> =>
     if (!validateString(date)) {
         res.status(400).json({
             error: 'Invalid Data',
-            message: 'The date is required and must be a valid date string',
+            message: 'The date is required and must be a string',
+        });
+        return;
+    }
+
+    if (!isValidDate(date)) {
+        res.status(400).json({
+            error: 'Invalid Data',
+            message: 'The date is required and must be a valid date string format - YYYY-MM-DD',
         });
         return;
     }
