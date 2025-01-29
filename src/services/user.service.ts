@@ -1,5 +1,6 @@
 import { ISeminarData } from '../interfaces/seminar.interface.js';
 import Seminar, { ISeminar } from '../models/seminar.js';
+import { fuzzySearch } from '../utils/fuzzySearch.js';
 
 export const createSeminar = async (seminarData: ISeminarData): Promise<ISeminar> => {
     try {
@@ -11,13 +12,16 @@ export const createSeminar = async (seminarData: ISeminarData): Promise<ISeminar
     }
 };
 
-export const findSeminar = async (page: number, limit: number, search: string): Promise<ISeminar[]> => {
+export const findSeminar = async (page: number, limit: number, query: string): Promise<ISeminar[]> => {
     try {
         // Find seminar by id
-        const seminar = await Seminar.find({ title: { $regex: search, $options: 'i' } })
-            .skip(page * limit)
-            .limit(limit);
-        return seminar;
+        const seminar = await Seminar.find();
+        if (query === '') {
+            return seminar.slice(page * limit, (page + 1) * limit);
+        }
+        const result = fuzzySearch(seminar, query);
+        const slicedSeminar = result.slice(page * limit, (page + 1) * limit);
+        return slicedSeminar.map((seminar) => seminar.item);
     } catch (error) {
         throw new Error('Error when finding seminar: ' + error);
     }
