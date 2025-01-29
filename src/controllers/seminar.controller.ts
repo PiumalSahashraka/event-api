@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { createSeminar, findSeminar } from '../services/user.service.js';
+import { createSeminar, findSeminar } from '../services/seminar.service.js';
 import { ISeminarData } from '../interfaces/seminar.interface.js';
 
 // Helper function for validate strings
