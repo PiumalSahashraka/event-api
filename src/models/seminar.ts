@@ -5,6 +5,7 @@ export interface ISeminar extends Document {
     description: string;
     date: Date;
     clicks: number;
+    dailyClicks: Map<string, number>;
     impressions: number;
     accepted: boolean;
 }
@@ -29,6 +30,11 @@ const seminarSchema = new Schema({
     impressions: {
         type: Number,
         default: 0,
+    },
+    dailyClicks: {
+        type: Map,
+        of: Number,
+        default: {},
     },
     accepted: {
         type: Boolean,

@@ -2,6 +2,7 @@ import express, { Application, Response, Request } from 'express';
 import morgan from 'morgan';
 import config from './env-config.js';
 import { getSeminarRouter } from '../routers/seminar.routes.js';
+import { homeController } from '../controllers/home.controller.js';
 
 export const configureApp = (): Application => {
     const app: Application = express();
@@ -17,9 +18,7 @@ export const configureApp = (): Application => {
 
     app.use('/api', getSeminarRouter());
 
-    app.use('/', (req: Request, res: Response) => {
-        res.send('Hello, this is seminar API');
-    });
+    app.use('/', homeController);
 
     return app;
 };
