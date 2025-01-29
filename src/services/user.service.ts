@@ -20,7 +20,8 @@ export const findSeminar = async (page: number, limit: number, query: string): P
             return seminar.slice(page * limit, (page + 1) * limit);
         }
         const result = fuzzySearch(seminar, query);
-        return result.slice(page * limit, (page + 1) * limit);
+        const slicedSeminar = result.slice(page * limit, (page + 1) * limit);
+        return slicedSeminar.map((seminar) => seminar.item);
     } catch (error) {
         throw new Error('Error when finding seminar: ' + error);
     }
