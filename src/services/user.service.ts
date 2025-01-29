@@ -12,9 +12,12 @@ export const createSeminar = async (seminarData: ISeminarData): Promise<ISeminar
     }
 };
 
-export const findSeminar = async (page: number, limit: number, query: string): Promise<ISeminar[]> => {
+export const findSeminar = async (page: number, limit: number, query: string, id: string | null = null): Promise<ISeminar[] | ISeminar | null> => {
     try {
         // Find seminar by id
+        if (id) {
+            return await Seminar.findById(id);
+        }
         const seminar = await Seminar.find();
         if (query === '') {
             return seminar.slice(page * limit, (page + 1) * limit);

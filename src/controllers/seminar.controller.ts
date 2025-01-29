@@ -61,6 +61,7 @@ export const postSeminar = async (req: Request, res: Response): Promise<void> =>
         });
         return;
     } catch (error) {
+        console.log('Error creating the seminar' + error);
         res.status(500).json({
             error: 'Server Error',
             message: 'There was an error creating the seminar',
@@ -78,7 +79,7 @@ export const getSeminar = async (req: Request, res: Response): Promise<void> => 
         const seminar = await findSeminar(page, limit, search);
 
         // check if seminar is null
-        if (seminar.length === 0) {
+        if (seminar === null || (Array.isArray(seminar) && seminar.length === 0)) {
             res.status(404).json({
                 error: 'Not found',
                 message: 'Seminar not found',
@@ -91,10 +92,36 @@ export const getSeminar = async (req: Request, res: Response): Promise<void> => 
             data: seminar,
         });
     } catch (error) {
-        console.log(error);
+        console.log('Error retrieving the seminar' + error);
         res.status(500).json({
             error: 'Server Error',
             message: 'There was an error retrieving the seminar',
+        });
+    }
+};
+
+export const getSeminarById = async (req: Request, res: Response): Promise<void> => {
+    const id = req.params.id;
+
+    try {
+        const seminar = await findSeminar(0, 10, '', id);
+        if (seminar == null) {
+            res.status(404).json({
+                error: 'Not found',
+                message: 'Seminar not found',
+            });
+            return;
+        } else {
+            res.status(200).json({
+                message: 'Seminar retrieved successfully',
+                data: seminar,
+            });
+        }
+    } catch (error) {
+        console.log('Error retrieving the seminar' + error);
+        res.status(404).json({
+            error: 'Not found',
+            message: 'Seminar not found',
         });
     }
 };
