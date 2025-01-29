@@ -16,6 +16,9 @@ export const findSeminar = async (page: number, limit: number, query: string): P
     try {
         // Find seminar by id
         const seminar = await Seminar.find();
+        if (query === '') {
+            return seminar.slice(page * limit, (page + 1) * limit);
+        }
         const result = fuzzySearch(seminar, query);
         return result.slice(page * limit, (page + 1) * limit);
     } catch (error) {
