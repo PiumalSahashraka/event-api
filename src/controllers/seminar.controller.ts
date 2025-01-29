@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { createSeminar } from '../services/user.service.js';
+import { createSeminar, findSeminar } from '../services/user.service.js';
 import { ISeminarData } from '../interfaces/seminar.interface.js';
 
 // Helper function for validate strings
@@ -66,5 +66,35 @@ export const postSeminar = async (req: Request, res: Response): Promise<void> =>
             message: 'There was an error creating the seminar',
         });
         return;
+    }
+};
+
+export const getSeminar = async (req: Request, res: Response): Promise<void> => {
+    const page = parseInt(req.query.page as string) - 1 || 0;
+    const limit = parseInt(req.query.limit as string) || 10;
+    const search = (req.query.search as string) || '';
+
+    try {
+        const seminar = await findSeminar(page, limit, search);
+
+        // check if seminar is null
+        if (seminar.length === 0) {
+            res.status(404).json({
+                error: 'Not found',
+                message: 'Seminar not found',
+            });
+            return;
+        }
+
+        res.status(200).json({
+            message: 'Seminar retrieved successfully',
+            data: seminar,
+        });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            error: 'Server Error',
+            message: 'There was an error retrieving the seminar',
+        });
     }
 };
