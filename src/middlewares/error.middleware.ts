@@ -11,7 +11,7 @@ export const errorMiddleware = (err: CustomError, req: Request, res: Response, n
     console.error('Error:', err);
 
     if (err instanceof mongoose.Error.ValidationError) {
-        res.status(400).json({ error: err.message });
+        res.status(400).json({ error: 'Validation Error', message: err.message });
         return;
     }
 
