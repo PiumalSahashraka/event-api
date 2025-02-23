@@ -2,7 +2,9 @@ import express, { Application, Response, Request } from 'express';
 import morgan from 'morgan';
 import config from './env-config.js';
 import { getSeminarRouter } from '../routers/seminar.routes.js';
+import { getUserRouter } from '../routers/user.routes.js';
 import { homeController } from '../controllers/home.controller.js';
+import { errorMiddleware } from '../middlewares/error.middleware.js';
 
 export const configureApp = (): Application => {
     const app: Application = express();
@@ -17,6 +19,8 @@ export const configureApp = (): Application => {
     app.use(express.urlencoded({ extended: true })); //To encode the data that is comming in Request.body
 
     app.use('/api', getSeminarRouter());
+    app.use('/api', getUserRouter());
+    app.use(errorMiddleware);
 
     app.use('/', homeController);
 

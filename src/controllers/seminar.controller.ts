@@ -1,18 +1,18 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import { createSeminar, findSeminar } from '../services/seminar.service.js';
 import { ISeminarData } from '../interfaces/seminar.interface.js';
+import { validateString, isValidDate } from '../utils/validateData.js';
+import { IAuthenticateRequest } from '../interfaces/authenticate.interface.js';
 
-// Helper function for validate strings
-const validateString = (field: any): boolean => typeof field === 'string' && field.trim() !== '';
-
-// Validate dates
-const isValidDate = (dateString: string): boolean => {
-    const date = new Date(dateString);
-    return !isNaN(date.getTime());
-};
-
-export const postSeminar = async (req: Request, res: Response): Promise<void> => {
+export const postSeminar = async (req: IAuthenticateRequest, res: Response, next: NextFunction): Promise<void> => {
     const { title, description, date } = req.body;
+    const user = req.user;
+    if (!user) {
+        res.status(400).json({
+            error: 'User not found',
+            message: 'User not found.',
+        });
+    }
 
     //validate title
     if (!validateString(title)) {
@@ -49,6 +49,7 @@ export const postSeminar = async (req: Request, res: Response): Promise<void> =>
         return;
     }
     const seminarData: ISeminarData = {
+        author: user?.username || 'Unknown',
         title: title,
         description: description,
         date: date,
@@ -61,16 +62,12 @@ export const postSeminar = async (req: Request, res: Response): Promise<void> =>
         });
         return;
     } catch (error) {
-        console.log('Error creating the seminar' + error);
-        res.status(500).json({
-            error: 'Server Error',
-            message: 'There was an error creating the seminar',
-        });
+        next(error);
         return;
     }
 };
 
-export const getSeminar = async (req: Request, res: Response): Promise<void> => {
+export const getSeminar = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const page = parseInt(req.query.page as string) - 1 || 0;
     const limit = parseInt(req.query.limit as string) || 10;
     const search = (req.query.search as string) || '';
@@ -92,15 +89,11 @@ export const getSeminar = async (req: Request, res: Response): Promise<void> => 
             data: seminar,
         });
     } catch (error) {
-        console.log('Error retrieving the seminar' + error);
-        res.status(500).json({
-            error: 'Server Error',
-            message: 'There was an error retrieving the seminar',
-        });
+        next(error);
     }
 };
 
-export const getSeminarById = async (req: Request, res: Response): Promise<void> => {
+export const getSeminarById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const id = req.params.id;
 
     try {
@@ -118,10 +111,6 @@ export const getSeminarById = async (req: Request, res: Response): Promise<void>
             });
         }
     } catch (error) {
-        console.log('Error retrieving the seminar' + error);
-        res.status(404).json({
-            error: 'Not found',
-            message: 'Seminar not found',
-        });
+        next(error);
     }
 };

@@ -8,7 +8,7 @@ export const createSeminar = async (seminarData: ISeminarData): Promise<ISeminar
         const newSeminar = new Seminar(seminarData);
         return await newSeminar.save();
     } catch (error) {
-        throw new Error('Error when creating seminar: ' + error);
+        throw error;
     }
 };
 
@@ -27,7 +27,7 @@ export const findSeminar = async (page: number, limit: number, query: string, id
         const slicedSeminar = result.slice(page * limit, (page + 1) * limit);
         return slicedSeminar.map((seminar) => seminar.item);
     } catch (error) {
-        throw new Error('Error when finding seminar: ' + error);
+        throw error;
     }
 };
 
@@ -35,7 +35,7 @@ export const findAllSeminar = async (): Promise<ISeminar[]> => {
     try {
         return await Seminar.find();
     } catch (error) {
-        throw new Error('Error when finding all seminars: ' + error);
+        throw error;
     }
 };
 
@@ -49,6 +49,6 @@ export const updateSeminarDailyClicks = async (id: string): Promise<ISeminar | n
         seminar.dailyClicks.set(today, (seminar.dailyClicks.get(today) || 0) + 1);
         return await seminar.save();
     } catch (error) {
-        throw new Error('Error when updating seminar daily clicks: ' + error);
+        throw error;
     }
 };

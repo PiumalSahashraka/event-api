@@ -1,6 +1,7 @@
 import { Schema, model, Document } from 'mongoose';
 
 export interface ISeminar extends Document {
+    author: string;
     title: string;
     description: string;
     date: Date;
@@ -11,6 +12,10 @@ export interface ISeminar extends Document {
 }
 
 const seminarSchema = new Schema({
+    author: {
+        type: String,
+        required: true,
+    },
     title: {
         type: String,
         required: true,
